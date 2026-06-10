@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "care360canvas",
+  "main": ".open-next/worker.js",
+  // nodejs_compat is required by OpenNext; compat date must be >= 2024-09-23.
+  "compatibility_date": "2025-03-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  }
+  // GEMINI_API_KEY is a SECRET — do not put it here. Set it with:
+  //   npx wrangler secret put GEMINI_API_KEY
+  // For local `npm run preview`, put it in .dev.vars (see .dev.vars.example).
+}

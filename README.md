@@ -29,6 +29,38 @@ npm run dev
 
 Open http://localhost:3000.
 
+## Deploy to Cloudflare Workers
+
+The app is configured to deploy as a **Cloudflare Worker** via the
+[OpenNext Cloudflare adapter](https://opennext.js.org/cloudflare) (`@opennextjs/cloudflare`),
+which runs the full Node-based app — including the `/api/generate` route — on Workers.
+
+```bash
+# 1. Authenticate Wrangler with your Cloudflare account (one time)
+npx wrangler login
+
+# 2. Set the Gemini key as a Worker secret (production)
+npx wrangler secret put GEMINI_API_KEY
+
+# 3. Build + deploy
+npm run deploy
+```
+
+To test the Worker locally in Cloudflare's runtime (workerd) before deploying:
+
+```bash
+cp .dev.vars.example .dev.vars   # then set GEMINI_API_KEY in .dev.vars
+npm run preview                  # builds and runs the Worker locally
+```
+
+Config lives in [`wrangler.jsonc`](wrangler.jsonc) (uses `nodejs_compat`) and
+[`open-next.config.ts`](open-next.config.ts). The build output (`.open-next/`) and
+`.dev.vars` are git-ignored. `GEMINI_API_KEY` is read from the Node env locally and from
+the Worker secret in production (see `resolveApiKey` in the route handler).
+
+> Pinned to `@opennextjs/cloudflare@1.15.1` — the last release that supports Next.js 14.
+> If you upgrade to Next.js 15+, you can move to the latest adapter.
+
 ## How the app is structured
 
 ```

@@ -32,13 +32,26 @@ interface IncomingMessage {
   content: string;
 }
 
+// Resolve the API key from the Node env (local dev / `next start`) or, on
+// Cloudflare Workers, from the Worker secret exposed via the OpenNext context.
+async function resolveApiKey(): Promise<string | undefined> {
+  if (process.env.GEMINI_API_KEY) return process.env.GEMINI_API_KEY;
+  try {
+    const { getCloudflareContext } = await import("@opennextjs/cloudflare");
+    const env = getCloudflareContext().env as { GEMINI_API_KEY?: string };
+    return env?.GEMINI_API_KEY;
+  } catch {
+    return undefined;
+  }
+}
+
 export async function POST(req: NextRequest) {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = await resolveApiKey();
   if (!apiKey) {
     return NextResponse.json(
       {
         error:
-          "Missing GEMINI_API_KEY. Add it to .env.local (see .env.example) and restart the dev server.",
+          "Missing GEMINI_API_KEY. Set it in .env.local for local dev, or as a Cloudflare Worker secret: `npx wrangler secret put GEMINI_API_KEY`.",
       },
       { status: 500 },
     );
