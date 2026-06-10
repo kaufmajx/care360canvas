@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { BlockDef } from "@/lib/blocks";
-import { PHASE_STYLES } from "@/lib/blocks";
+import { BLOCKS, PHASE_STYLES } from "@/lib/blocks";
 import type { ChatMessage } from "@/lib/types";
 import { useCanvas } from "../CanvasProvider";
 import { generate } from "@/lib/ai";
@@ -59,6 +59,23 @@ export function AiBlockView({ block }: { block: BlockDef }) {
 
   const lastAssistant = [...bs.messages].reverse().find((m) => m.role === "assistant");
 
+  // What foundation/earlier work grounds this block's AI calls (shown to the
+  // user, and actually sent via buildSystemContext on every request).
+  const hasFields = (id: number) =>
+    Object.values(state.blocks[id].fields).some((v) => v.trim());
+  const foundation: string[] = [];
+  if (hasFields(1)) foundation.push("Core documents");
+  if (hasFields(2)) foundation.push("Values & beliefs");
+  if (hasFields(3)) foundation.push("Stakeholders");
+  const priorCount = BLOCKS.filter(
+    (b) =>
+      b.id < block.id &&
+      b.kind !== "input" &&
+      (state.blocks[b.id].finalWriteup.trim() ||
+        state.blocks[b.id].messages.some((m) => m.role === "assistant")),
+  ).length;
+  const isGrounded = foundation.length > 0 || priorCount > 0;
+
   const sendBtn =
     "rounded-lg px-4 py-2 text-sm font-semibold text-white shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50 " +
     ps.accentBg + " hover:opacity-90";
@@ -67,6 +84,34 @@ export function AiBlockView({ block }: { block: BlockDef }) {
     <div className="space-y-5">
       {/* Solution capture / reminder */}
       <SolutionPanel block={block} onUseResponse={lastAssistant?.content} />
+
+      {/* Grounding indicator — shows the Blocks 1–3 foundation + earlier work
+          that's fed into every AI call for this block. */}
+      <div className="flex items-start gap-2 rounded-lg border border-black/10 bg-white/60 px-3 py-2 text-xs text-black/55">
+        <span aria-hidden>🔗</span>
+        {isGrounded ? (
+          <span>
+            Grounded in your foundation
+            {foundation.length > 0 && (
+              <>
+                : <span className="font-medium text-[#3a3a38]">{foundation.join(" · ")}</span>
+              </>
+            )}
+            {priorCount > 0 && (
+              <>
+                {" "}
+                + {priorCount} earlier block{priorCount > 1 ? "s" : ""}
+              </>
+            )}
+            . The AI uses this automatically — no need to repeat it.
+          </span>
+        ) : (
+          <span>
+            Tip: fill in Blocks 1–3 (your foundation) first — the AI uses them to ground every
+            answer in this block.
+          </span>
+        )}
+      </div>
 
       {/* Editable prompt(s) */}
       <div className="rounded-xl border border-black/10 bg-white/70">
