@@ -57,6 +57,34 @@ export function AiBlockView({ block }: { block: BlockDef }) {
     setFinalWriteup(block.id, existing ? `${existing}\n\n${text}` : text);
   };
 
+  // "Create Your Jump Script" — the same synthesis prompt run at the end of
+  // every block; its result becomes the block write-up.
+  async function summarizeBlock() {
+    if (loading) return;
+    if (
+      bs.finalWriteup.trim() &&
+      !window.confirm("Replace your block write-up with an AI-generated Jump Script summary?")
+    )
+      return;
+    const content =
+      "Synthesize all of the essential information from this block into 1-2 concise paragraphs and also include a table or bullet points to assist with the clear summary.";
+    const history = [...bs.messages, { role: "user" as const, content }].map((m) => ({
+      role: m.role,
+      content: m.content,
+    }));
+    setLoading(true);
+    setError(null);
+    try {
+      const system = buildSystemContext(state, block.id);
+      const reply = await generate({ apiKey, system, messages: history });
+      setFinalWriteup(block.id, reply);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const lastAssistant = [...bs.messages].reverse().find((m) => m.role === "assistant");
 
   // What foundation/earlier work grounds this block's AI calls (shown to the
@@ -249,14 +277,24 @@ export function AiBlockView({ block }: { block: BlockDef }) {
           <label className="text-sm font-semibold text-[#3a3a38]">
             📝 Your block write-up
           </label>
-          {lastAssistant && (
+          <div className="flex items-center gap-2">
             <button
-              onClick={() => appendToWriteup(lastAssistant.content)}
-              className="rounded-md border border-black/10 bg-white px-2.5 py-1 text-xs font-medium text-[#3a3a38] transition hover:bg-black/5"
+              onClick={summarizeBlock}
+              disabled={loading}
+              title="Ask AI to synthesize this block into a Jump Script summary"
+              className="rounded-md border border-black/10 bg-white px-2.5 py-1 text-xs font-medium text-[#3a3a38] transition hover:bg-black/5 disabled:opacity-50"
             >
-              Use latest AI response
+              ✨ Create Jump Script summary
             </button>
-          )}
+            {lastAssistant && (
+              <button
+                onClick={() => appendToWriteup(lastAssistant.content)}
+                className="rounded-md border border-black/10 bg-white px-2.5 py-1 text-xs font-medium text-[#3a3a38] transition hover:bg-black/5"
+              >
+                Use latest AI response
+              </button>
+            )}
+          </div>
         </div>
         <p className="mb-2 text-xs text-black/50">
           Synthesize the team’s conclusion for this block in your own words. This is what flows into your final report — edit freely.
@@ -282,8 +320,8 @@ function SolutionPanel({
   onUseResponse?: string;
 }) {
   const { state, setSolution } = useCanvas();
-  const isCapture = block.id === 8;
-  const usesName = block.id >= 9 && block.id <= 12;
+  const isCapture = block.id === 7;
+  const usesName = block.id >= 8 && block.id <= 12;
   if (!isCapture && !usesName) return null;
 
   if (isCapture) {
@@ -291,8 +329,8 @@ function SolutionPanel({
       <div className="rounded-xl border border-techware-border bg-techware-light p-4">
         <div className="mb-1 text-sm font-bold text-techware">🎯 Our selected solution</div>
         <p className="mb-3 text-xs text-black/55">
-          Capture your team’s chosen solution here. It carries into Blocks 9–12 and replaces the
-          “[ENTER your solution name]” placeholders automatically.
+          Capture your team’s synthesized solution here. It carries into Blocks 8–12 and replaces
+          the “[ENTER your solution name]” placeholders automatically.
         </p>
         <div className="space-y-3">
           <input

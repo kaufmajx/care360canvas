@@ -15,7 +15,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "CARELab Civic Impact Canvas",
+  title: "CARE360™ Civic Impact Canvas",
   description:
     "A guided, AI-assisted civic innovation tool — 12 CARE-guided blocks, empowered by PRISM.",
 };

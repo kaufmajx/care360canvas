@@ -294,10 +294,10 @@ export function ReportBuilder() {
                 {team.projectName || "Civic Impact Report"}
               </h1>
               <p className="mt-1 text-sm text-black/55">
-                {team.teamName ? `Team ${team.teamName}` : "CARELab Civic Impact Canvas"}
+                {team.teamName ? `Team ${team.teamName}` : "CARE360™ Civic Impact Canvas"}
                 {team.members ? ` · ${team.members}` : ""}
               </p>
-              <p className="text-xs text-black/40">CARELab Civic Impact Canvas · {today}</p>
+              <p className="text-xs text-black/40">CARE360™ Civic Impact Canvas · {today}</p>
             </div>
 
             {report.executiveSummary.trim() && (

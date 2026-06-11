@@ -119,32 +119,10 @@ export const BLOCKS: BlockDef[] = [
       "Human-centered design is critical because the Mayor’s Challenge is not just a problem to solve; it is a community issue that affects real people with different needs, experiences, and hopes for the future. By beginning with strong foundation material, you will better understand the challenge, define the problem clearly, listen for stakeholder voices that may otherwise be missed, and recognize existing community solutions already working toward impact. This helps ensure your ideas are not created in isolation, but are thoughtful, respectful, and designed to build on community wisdom while creating more sustainable and evenhanded outcomes.",
     inputFields: [
       {
-        id: "challengeBrief",
-        label: "Mayor’s Challenge Brief",
+        id: "coreDocuments",
+        label: "Enter all CORE documents now",
         placeholder:
-          "Paste your 1-page Mayor’s Challenge Brief — a summary of the problem you are solving.",
-      },
-      {
-        id: "careCriteria",
-        label: "CARE Criteria",
-        placeholder:
-          "Paste your CARE Criteria — your guiding north star ensuring the venture is values-driven.",
-      },
-      {
-        id: "discoverySession",
-        label: "Creative Discovery Session summary",
-        placeholder: "Paste your 90-min Creative Discovery Session summary.",
-      },
-      {
-        id: "actionPlan",
-        label: "Action Plan Summary",
-        placeholder: "Paste your Action Plan Summary (or relevant local plan).",
-      },
-      {
-        id: "other",
-        label: "Other core documents",
-        placeholder:
-          "Paste any other community voices, social listening, or core documents (TBD).",
+          "Paste ALL of your core documents here in one place — e.g. the Mayor’s Challenge Brief, CARE Criteria, Creative Discovery Session summary, Action Plan Summary, community voices, social listening, and anything else relevant.",
       },
     ],
   },
@@ -263,7 +241,7 @@ export const BLOCKS: BlockDef[] = [
     id: 5,
     phase: "mindware",
     emoji: "🔍",
-    title: "WHAT IS CURRENT SOLUTION?",
+    title: "WHAT ARE CURRENT INITIATIVES?",
     subtitle: "Current efforts • What’s working • Gaps • Opportunities",
     kind: "ai",
     learning:
@@ -284,7 +262,7 @@ export const BLOCKS: BlockDef[] = [
     subtitle: "Local • U.S. • Global examples • Lessons to adapt",
     kind: "ai",
     learning:
-      "Benchmarking means studying real examples of solutions that are already working in other places so your team can learn from demonstrated success instead of starting from scratch. In innovation and social design, benchmarking is not copying another city’s idea exactly; it means looking at comparable communities, understanding what made a solution effective, and adapting the best insights to fit your local challenge, stakeholders, culture, resources, and CARE goals. This helps teams design more practical, credible, and impactful community solutions by learning what has worked, what conditions made it possible, and what risks or limitations should be considered before adapting the idea.",
+      "Benchmarking means studying real examples of solutions that are already working in other places so your team can learn from demonstrated success instead of starting from scratch. In innovation and social design, benchmarking is not copying another city’s idea exactly; it means looking at comparable communities, understanding what made a solution effective, and adapting the best insights to fit your local challenge, stakeholders, culture, resources, and CARE Criteria. This helps teams design more practical, credible, and impactful community solutions by learning what has worked, what conditions made it possible, and what risks or limitations should be considered before adapting the idea.",
     prompts: [
       {
         id: "benchmark",
@@ -302,13 +280,20 @@ export const BLOCKS: BlockDef[] = [
     title: "WHAT COULD WE CREATE?",
     subtitle: "Human Brainstorm • AI Unlock • Hybrid synthesis • Select strongest concept",
     kind: "ai",
+    action:
+      "As a team, brainstorm possible solutions that might address the challenge before prompting AI. Select your top one and create a summary paragraph. Share your solution in PROMPT 2 below.",
     learning:
-      "Now that your team has studied stakeholders, root causes, current solutions, and benchmarks, you are ready to begin imagining possible solutions. Brainstorming means generating several ideas quickly before deciding which one is best. At this stage, do not try to create the perfect solution right away. Explore bold, practical, human-centered possibilities that respond to real stakeholder needs, address root causes, complement what already exists, and align with the CARE Criteria. Your goal is to compare several promising directions, identify what is most feasible and meaningful, and shape one strong solution concept that could become a civic action plan.",
+      "Now that your team has studied stakeholders, root causes, current initiatives, and benchmarks, you are ready to begin imagining possible solutions. Brainstorming means generating several ideas quickly before deciding which one is best. At this stage, do not try to create the perfect solution right away. Explore bold, practical, human-centered possibilities that respond to real stakeholder needs, address root causes, complement what already exists, and align with the CARE Criteria. Your goal is to compare several promising directions, identify what is most feasible and meaningful, and shape one strong solution concept that could become a **civic action plan**.",
     prompts: [
       {
         id: "brainstorm",
-        label: "Solution brainstorm",
-        text: "You are the CARELab Civic Impact Canvas AI facilitating human-centered innovation brainstorming. Using all of the work we have done so far (including our selected system domain, stakeholder analysis, root-cause analysis, current solution research, benchmark examples) and our CARE Criteria guardrails, and team values, generate solution ideas that are bold and creative while staying grounded in real community needs.\nGenerate:\n- Human-centered brainstorm ideas (create 5-7 concepts)\n- Rank the top 3 strongest overall concept recommendations with rationale. Do not simply choose the most exciting idea; choose the ideas that best balance human impact, feasibility, differentiation, CARE alignment, and balance community stakeholder needs.\nFor each top idea, briefly explain:\nPractical solution pathways\nFor each idea, briefly explain whether it could become a pilot, partnership, service, campaign, event series, resource platform, community action plan, or other civic venture concept.\nRisks and tradeoffs\nFor each top idea, identify one possible implementation challenge, risk, or unintended consequence.\n\nBe bold and creative while staying grounded in community needs.\nOutput format: summary paragraph and concise table or bullet format for easy understanding including: solution idea, stakeholders served, root cause addressed, how works, why different, risks",
+        label: "PROMPT 1 — brainstorm & rank",
+        text: "You are the CARELab Civic Impact Canvas AI facilitating human-centered innovation brainstorming. Using all of the work we have done so far (including our selected system domain, stakeholder analysis, root-cause analysis, current solution research, benchmark examples) and our CARE Criteria guardrails, and team values, generate solution ideas that are bold and creative while staying grounded in real community needs.\nGenerate:\n- 2 Human-centered brainstorm concepts using your best thinking\n- Rank these top 2 concept recommendations with rationale. Do not simply choose the most exciting idea; choose the ideas that best balance human impact, feasibility, differentiation, CARE Criteria alignment, and balance community stakeholder needs.\nFor each top concept, provide a brief explanation for the ranking and share risks and tradeoffs.",
+      },
+      {
+        id: "synthesize",
+        label: "PROMPT 2 — synthesize",
+        text: "Synthesize:\nHere is our student solution: [enter paragraph here]. Based on the AI-generated solution 1 from the previous prompt, synthesize both solutions into a final concept that addresses the needs of all stakeholders.\nShare this final synthesized solution as a paragraph.\nBe bold and creative while staying grounded in community needs.\nOutput format: summary paragraph and concise table or bullet format for easy understanding including: solution idea, stakeholders served, root cause addressed, how works, why different, risks.",
       },
     ],
   },
@@ -316,21 +301,19 @@ export const BLOCKS: BlockDef[] = [
     id: 8,
     phase: "techware",
     emoji: "💡",
-    title: "HOW COULD AI HELP?",
-    subtitle: "Access • Efficiency • Personalization • Prediction • Engagement",
+    title: "DOES SOLUTION HARMONIZE STAKEHOLDERS’ NEEDS?",
+    subtitle: "Efficiency • Sustainability • Economic viability • Caring for community",
     kind: "ai",
+    // NOTE: the edits doc marked this Learning section as "TBD — replace to fit
+    // new context." This is interim text aligned to the new prompt; replace it
+    // with the team's final wording when provided.
     learning:
-      "After your team has created human-centered solution ideas, the next step is to ask how AI or technology could responsibly strengthen the solution. AI should not replace human judgment, lived experience, or community relationships. Instead, it can be used as an “unlock” to improve access, reduce friction, personalize support, identify patterns, amplify community voice, or help measure impact. In civic design, the most important question is not “Can we use AI?” but “Should we use AI, and how can it help people more fairly, safely, and effectively?” Your goal is to explore where AI could add meaningful value while protecting equity, privacy, trust, and human dignity.",
+      "In this block, your team evaluates whether the synthesized solution truly harmonizes the needs of all stakeholders. Using the Horizon360 Impact™ framework, you will examine the solution across efficiency, sustainability, economic viability, and caring for community — checking that it works for the people most affected and that benefits and burdens are balanced rather than shifted onto any one group.",
     prompts: [
       {
-        id: "aiunlock",
-        label: "AI unlock opportunities",
-        text: "You are the CARELab Civic Impact Canvas AI exploring AI’s role in civic good. Analyze AI-enabled unlock opportunities (novel uses of AI/tech that could strengthen the top ideas shared in BLOCK 7) potential for:\n- ACCESS: Removing barriers to awareness, services, information and participation\n- EFFICIENCY: Reducing administrative burden and wait times\n- PERSONALIZATION: Tailoring support to different stakeholder needs\n- PREDICTION: Anticipating needs before they become crises\n- ENGAGEMENT: Building community participation and voice\n\nFor each top opportunity identified, share a possible “hybrid synthesis” combining AI unlock into the approach (explain where AI could bring value).\n\nAlways center evenhandedness and avoid AI harms. Share as summary and table or bullet format.",
-      },
-      {
-        id: "solution",
-        label: "Select & name our solution",
-        text: "TEAM DECISION: Using all you know, discuss with team and select a SOLUTION that best addresses the Mayor’s Challenge.\n\nHere is our team’s selected solution [ENTER ALL INFO HERE]. Generate our SOLUTION as a clear concise 1 paragraph summary including all essential information so that we are able to analyze it further in BLOCK 9. From here out call our solution [ENTER NAME HERE].",
+        id: "harmonize",
+        label: "Stakeholder harmonization",
+        text: "Use the Horizon360 Impact™ framework to evaluate how our synthesized solution addresses the needs of our stakeholders that we have previously identified. Analyze in terms of efficiency, sustainability, economic viability, and caring for community. Output this as a paragraph with associated table or bullet format.",
       },
     ],
   },
@@ -338,7 +321,7 @@ export const BLOCKS: BlockDef[] = [
     id: 9,
     phase: "techware",
     emoji: "💡",
-    title: "WHO BENEFITS?",
+    title: "WHAT ARE COMMUNITY IMPACTS?",
     subtitle: "Applying CARE Criteria • Benefits • Risks • Missing stakeholders",
     kind: "ai",
     learning:
@@ -347,7 +330,7 @@ export const BLOCKS: BlockDef[] = [
       {
         id: "benefits",
         label: "CARE benefits analysis",
-        text: "You are the CARELab Civic Impact Canvas AI conducting a CARE benefits analysis. Our selected solution is [ENTER your solution name]. Using all of the work we have done so far — evaluate who benefits, who may be burdened, and who may be missing from our proposed solution.\nEvaluate applying the CARE Criteria:\n- Who directly benefits and how\n- Who indirectly benefits\n- Potential risks and unintended consequences\n- Missing stakeholders who should be included\n- Benefits and burdens fairly distributed",
+        text: "You are the CARELab Civic Impact Canvas AI conducting a CARE benefits analysis. Our selected solution is [ENTER your solution name]. Using all of the work we have done so far — evaluate who benefits, who may be burdened, and who may be missing from our proposed solution.\nEvaluate applying the CARE Criteria:\n- Who directly benefits and how\n- Who indirectly benefits\n- Potential risks, tradeoffs, and unintended consequences\n- Missing stakeholders who should be included\n- Benefits and burdens fairly distributed",
       },
     ],
   },
@@ -357,11 +340,11 @@ export const BLOCKS: BlockDef[] = [
     id: 10,
     phase: "impact",
     emoji: "🚀",
-    title: "MEASURING POSITIVE IMPACT",
+    title: "ASSESSING IMPACT",
     subtitle: "Short- & long-term impact • Responsible Performance Indicators (RPIs)",
     kind: "ai",
     learning:
-      "In this block, your team will use Horizons360 Impact™ mapping to consider both short-term impact — what could change within about one year — and long-term impact — what could change over three or more years if the solution grows, improves, or inspires broader action. You will also identify Responsible Performance Indicators, which are practical ways to measure whether the solution is working in a CARE-aligned way. These measures should not only track numbers; they should help your team understand whether the solution is improving human experience, reducing harm, building trust, strengthening community capacity, and creating more evenhanded outcomes.",
+      "In this block, your team will use Horizons360 Impact™ mapping to consider both short-term impact — what could change within about one year — and long-term impact — what could change over three or more years if the solution grows, improves, or inspires broader action. In order to complete this analysis, you will need to determine what criteria will be used to assess these impacts. We will ask AI to propose these criteria.",
     prompts: [
       {
         id: "horizons",

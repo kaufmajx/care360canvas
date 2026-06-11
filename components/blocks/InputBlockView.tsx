@@ -19,7 +19,7 @@ export function InputFields({ block }: { block: BlockDef }) {
           <AutoTextarea
             value={blockState.fields[f.id] ?? ""}
             placeholder={f.placeholder}
-            minRows={f.id === "challengeBrief" || f.id === "careCriteria" ? 5 : 3}
+            minRows={f.id === "coreDocuments" ? 10 : 3}
             onChange={(e) => setBlockField(block.id, f.id, e.target.value)}
           />
         </div>

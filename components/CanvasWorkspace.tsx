@@ -41,8 +41,8 @@ export function CanvasWorkspace() {
       <header className="z-20 flex shrink-0 items-center justify-between gap-3 border-b border-black/10 bg-white/80 px-4 py-2.5 backdrop-blur">
         <Link href="/" className="flex items-center gap-2 text-sm font-bold text-[#2b2b29]">
           <span aria-hidden>🧭</span>
-          <span className="hidden sm:inline">CARELab Civic Impact Canvas</span>
-          <span className="sm:hidden">CARELab</span>
+          <span className="hidden sm:inline">CARE360™ Civic Impact Canvas</span>
+          <span className="sm:hidden">CARE360</span>
         </Link>
         <div className="flex items-center gap-2">
           <ApiKeyButton />

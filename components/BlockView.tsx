@@ -4,6 +4,7 @@ import type { BlockDef } from "@/lib/blocks";
 import { PHASE_STYLES } from "@/lib/blocks";
 import { InputFields } from "./blocks/InputBlockView";
 import { AiBlockView } from "./blocks/AiBlockView";
+import { Markdown } from "./Markdown";
 
 export function BlockView({ block }: { block: BlockDef }) {
   const ps = PHASE_STYLES[block.phase];
@@ -25,7 +26,9 @@ export function BlockView({ block }: { block: BlockDef }) {
         <div className={`mb-1.5 text-[11px] font-bold uppercase tracking-wide ${ps.accentText}`}>
           Learning
         </div>
-        <p className="text-sm leading-relaxed text-[#3a3a38]">{block.learning}</p>
+        <div className="text-sm leading-relaxed text-[#3a3a38]">
+          <Markdown>{block.learning}</Markdown>
+        </div>
       </div>
 
       {block.action && (

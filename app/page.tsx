@@ -45,7 +45,7 @@ export default function Home() {
             })}
           </div>
           <h1 className="text-4xl font-bold tracking-tight text-[#2b2b29] sm:text-5xl">
-            CARELab Civic Impact Canvas
+            CARE360™ Civic Impact Canvas
           </h1>
           <p className="mx-auto mt-3 max-w-2xl text-lg text-black/60">
             12 AI-powered blocks to unlock sustainable impact — guided by{" "}
@@ -75,7 +75,7 @@ export default function Home() {
         {/* CARE + PRISM explainer */}
         <section className="mt-12 grid gap-5 md:grid-cols-2">
           <Framework
-            title="CARE™ — your compass"
+            title="CARE Criteria™"
             accent="text-[#D85A30]"
             border="border-[#F0A090]"
             bg="bg-[#FDF0EE]"
@@ -104,7 +104,7 @@ export default function Home() {
               Challenge assumptions and synthesize — humans decide, AI assists.
             </Step>
             <Step n="4" title="Generate deliverables">
-              Produce an editable Executive Summary and 10-slide pitch, then download a PDF.
+              Produce an editable Executive Summary and 10-slide pitch script, then download a PDF.
             </Step>
           </ol>
         </section>
