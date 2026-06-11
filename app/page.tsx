@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCanvas } from "@/components/CanvasProvider";
 import { JumpScriptControls } from "@/components/JumpScriptControls";
+import { ApiKeyButton } from "@/components/ApiKeyButton";
 import { BLOCKS, PHASES, PHASE_STYLES } from "@/lib/blocks";
 
 const CARE = [
@@ -60,6 +61,7 @@ export default function Home() {
             >
               {started ? "Continue the Canvas →" : "Begin the Canvas →"}
             </Link>
+            <ApiKeyButton />
             <JumpScriptControls />
           </div>
           {started && (
@@ -109,8 +111,9 @@ export default function Home() {
 
         <footer className="mt-12 text-center text-xs text-black/45">
           AI as Thinking Partner • Humans as Decision Makers. No account, no database — your work
-          lives in this browser and in the Jump Script file you save. Save often so your team can
-          pick up where you left off.
+          lives in this browser and in the Jump Script file you save. The AI runs on your own free
+          Gemini key (added with the “API key” button, stored only on your device). Save often so
+          your team can pick up where you left off.
         </footer>
       </div>
     </main>

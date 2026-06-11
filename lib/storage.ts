@@ -3,6 +3,29 @@ import { BLOCKS } from "./blocks";
 
 export const STORAGE_KEY = "carelab_canvas_v1";
 
+// The user's Gemini API key is stored under its OWN key — deliberately NOT
+// part of CanvasState, so it never gets written into a shared Jump Script.
+export const API_KEY_STORAGE = "carelab_gemini_key";
+
+export function loadApiKey(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    return window.localStorage.getItem(API_KEY_STORAGE) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+export function saveApiKey(key: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    if (key) window.localStorage.setItem(API_KEY_STORAGE, key);
+    else window.localStorage.removeItem(API_KEY_STORAGE);
+  } catch {
+    // ignore quota/serialization errors
+  }
+}
+
 function emptyBlock(): BlockState {
   return {
     fields: {},

@@ -17,13 +17,18 @@ import type {
 } from "@/lib/types";
 import {
   createDefaultState,
+  loadApiKey,
   loadState,
+  saveApiKey,
   saveState,
 } from "@/lib/storage";
 
 interface CanvasContextValue {
   state: CanvasState;
   hydrated: boolean;
+  /** The user's Gemini API key (browser-only; never part of the Jump Script). */
+  apiKey: string;
+  setApiKey: (key: string) => void;
   setTeam: (patch: Partial<TeamInfo>) => void;
   setSolution: (patch: Partial<CanvasState["solution"]>) => void;
   setReport: (patch: Partial<ReportState>) => void;
@@ -42,6 +47,7 @@ const CanvasContext = createContext<CanvasContextValue | null>(null);
 
 export function CanvasProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<CanvasState>(() => createDefaultState());
+  const [apiKey, setApiKeyState] = useState("");
   const [hydrated, setHydrated] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -49,7 +55,13 @@ export function CanvasProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const stored = loadState();
     if (stored) setState(stored);
+    setApiKeyState(loadApiKey());
     setHydrated(true);
+  }, []);
+
+  const setApiKey = useCallback((key: string) => {
+    setApiKeyState(key);
+    saveApiKey(key);
   }, []);
 
   // Debounced persistence whenever state changes (after hydration).
@@ -157,6 +169,8 @@ export function CanvasProvider({ children }: { children: React.ReactNode }) {
   const value: CanvasContextValue = {
     state,
     hydrated,
+    apiKey,
+    setApiKey,
     setTeam,
     setSolution,
     setReport,

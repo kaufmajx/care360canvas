@@ -12,7 +12,7 @@ import { AutoTextarea } from "../AutoTextarea";
 import { PrismPanel } from "../PrismPanel";
 
 export function AiBlockView({ block }: { block: BlockDef }) {
-  const { state, addMessage, setPromptDraft, clearMessages, setFinalWriteup } =
+  const { state, apiKey, addMessage, setPromptDraft, clearMessages, setFinalWriteup } =
     useCanvas();
   const bs = state.blocks[block.id];
   const ps = PHASE_STYLES[block.phase];
@@ -37,7 +37,7 @@ export function AiBlockView({ block }: { block: BlockDef }) {
     setError(null);
     try {
       const system = buildSystemContext(state, block.id);
-      const reply = await generate({ system, messages: history });
+      const reply = await generate({ apiKey, system, messages: history });
       addMessage(block.id, { role: "assistant", content: reply, ts: Date.now() });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong.");

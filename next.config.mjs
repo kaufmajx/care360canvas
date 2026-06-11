@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  // Static export — the whole app is client-side (state lives in
+  // localStorage), so it ships as plain static files to Cloudflare Pages.
+  // `next build` writes the site to ./out.
+  output: "export",
+  images: { unoptimized: true },
+};
 
 export default nextConfig;
-
-// Cloudflare Workers (OpenNext) — enables getCloudflareContext() during
-// `next dev` so the app behaves the same locally as on Workers.
-// This is a no-op for the regular Node build/runtime.
-import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
-initOpenNextCloudflareForDev();

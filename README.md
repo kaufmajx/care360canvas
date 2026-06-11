@@ -11,55 +11,44 @@ and 10-slide pitch outline that can be downloaded as a PDF.
 
 ## Tech stack
 
-- **Next.js 14** (App Router, TypeScript, Tailwind CSS)
-- **AI:** Google Gemini (`gemini-2.5-flash-lite`, free tier) via a server-side route handler
-- **No auth, no database** — all state lives in `localStorage` (`carelab_canvas_v1`) and in
-  the downloadable **Jump Script** JSON file teams pass between sessions/members.
+- **Next.js 14** (App Router, TypeScript, Tailwind CSS), built as a **static site** (`output: "export"`)
+- **AI:** Google Gemini (`gemini-2.5-flash-lite`, free tier), called **directly from the browser**
+  using each user's own key — there is no backend.
+- **No server, no auth, no database** — all state lives in `localStorage` (`carelab_canvas_v1`)
+  and in the downloadable **Jump Script** JSON file teams pass between sessions/members.
 
 ## Getting started
 
 ```bash
-# 1. Add your Gemini API key (free: https://aistudio.google.com/apikey)
-cp .env.example .env.local
-#   then edit .env.local and set GEMINI_API_KEY=...
-
-# 2. Run the dev server
+npm install
 npm run dev
 ```
 
-Open http://localhost:3000.
+Open http://localhost:3000, click **🔑 API key**, and paste a free Gemini key
+(https://aistudio.google.com/apikey). The key is stored only in your browser.
 
-## Deploy to Cloudflare Workers
+## Deploy to Cloudflare Pages
 
-The app is configured to deploy as a **Cloudflare Worker** via the
-[OpenNext Cloudflare adapter](https://opennext.js.org/cloudflare) (`@opennextjs/cloudflare`),
-which runs the full Node-based app — including the `/api/generate` route — on Workers.
+It's a static site, so deployment is just "build and upload a folder."
+
+**Via Git (recommended):** connect the repo in the Cloudflare dashboard
+(**Workers & Pages → Create → Pages → Connect to Git**) with:
+
+| Setting          | Value                          |
+| ---------------- | ------------------------------ |
+| Framework preset | Next.js (Static HTML Export)   |
+| Build command    | `npm run build`                |
+| Build output dir | `out`                          |
+
+There is **no environment variable / secret to set** — each user enters their own Gemini
+key in the app. (That key is browser-only and is *not* saved into a Jump Script.)
+
+**Via CLI (one-off):**
 
 ```bash
-# 1. Authenticate Wrangler with your Cloudflare account (one time)
-npx wrangler login
-
-# 2. Set the Gemini key as a Worker secret (production)
-npx wrangler secret put GEMINI_API_KEY
-
-# 3. Build + deploy
-npm run deploy
+npm run build
+npx wrangler pages deploy out
 ```
-
-To test the Worker locally in Cloudflare's runtime (workerd) before deploying:
-
-```bash
-cp .dev.vars.example .dev.vars   # then set GEMINI_API_KEY in .dev.vars
-npm run preview                  # builds and runs the Worker locally
-```
-
-Config lives in [`wrangler.jsonc`](wrangler.jsonc) (uses `nodejs_compat`) and
-[`open-next.config.ts`](open-next.config.ts). The build output (`.open-next/`) and
-`.dev.vars` are git-ignored. `GEMINI_API_KEY` is read from the Node env locally and from
-the Worker secret in production (see `resolveApiKey` in the route handler).
-
-> Pinned to `@opennextjs/cloudflare@1.15.1` — the last release that supports Next.js 14.
-> If you upgrade to Next.js 15+, you can move to the latest adapter.
 
 ## How the app is structured
 
@@ -69,9 +58,9 @@ app/
   page.tsx                Landing / overview
   canvas/page.tsx         The 12-block workspace (CanvasWorkspace)
   report/page.tsx         The report builder (ReportBuilder)
-  api/generate/route.ts   Server-side Gemini proxy (the ONLY place the key is used)
 components/
-  CanvasProvider.tsx      localStorage-backed state + autosave
+  ApiKeyButton.tsx        Header button + modal for the user's own Gemini key
+  CanvasProvider.tsx      localStorage-backed state + autosave (+ API key)
   CanvasWorkspace.tsx     App shell: header, progress, sidebar, footer nav
   BlockView.tsx           Block header (verbatim learning text) + body dispatcher
   blocks/InputBlockView   Human-input fields (Blocks 1–3)
@@ -83,7 +72,7 @@ lib/
   prism.ts                PRISM lenses + questions
   storage.ts              localStorage + Jump Script import/export
   context.ts              Builds the AI grounding context from prior blocks
-  ai.ts                   Client helper that calls /api/generate
+  ai.ts                   Calls the Gemini API directly from the browser
   types.ts                Shared types
 ```
 
@@ -97,6 +86,7 @@ in it is editable, so teams can collaborate and pick up where they left off.
 
 ## Switching to the Claude API later
 
-The app is provider-agnostic everywhere except **`app/api/generate/route.ts`**. Search the
-codebase for `CLAUDE API MIGRATION` for step-by-step pointers — only that one route and the
-env var name need to change.
+The only AI integration point is **`lib/ai.ts`** (search for `CLAUDE API MIGRATION`). Note that
+Anthropic does not allow direct browser calls, so a Claude migration would require adding a small
+server proxy to hold the key (e.g. a Cloudflare Pages Function) — at which point the app would no
+longer be a pure static site.
