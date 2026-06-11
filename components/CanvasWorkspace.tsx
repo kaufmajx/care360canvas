@@ -7,7 +7,6 @@ import { useCanvas } from "./CanvasProvider";
 import { Sidebar } from "./Sidebar";
 import { BlockView } from "./BlockView";
 import { JumpScriptControls } from "./JumpScriptControls";
-import { ApiKeyButton } from "./ApiKeyButton";
 
 export function CanvasWorkspace() {
   const { state, hydrated, setBlockStatus } = useCanvas();
@@ -45,7 +44,6 @@ export function CanvasWorkspace() {
           <span className="sm:hidden">CARE360</span>
         </Link>
         <div className="flex items-center gap-2">
-          <ApiKeyButton />
           <JumpScriptControls compact />
           <Link
             href="/report"

@@ -1,0 +1,6 @@
+name = "care360canvas"
+compatibility_date = "2025-03-01"
+# nodejs_compat is required by the Anthropic SDK running in the Pages Function.
+compatibility_flags = ["nodejs_compat"]
+# Static site output from `next build` (output: "export").
+pages_build_output_dir = "out"

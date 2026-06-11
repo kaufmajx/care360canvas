@@ -11,25 +11,28 @@ and 10-slide pitch outline that can be downloaded as a PDF.
 
 ## Tech stack
 
-- **Next.js 14** (App Router, TypeScript, Tailwind CSS), built as a **static site** (`output: "export"`)
-- **AI:** Google Gemini (`gemini-2.5-flash-lite`, free tier), called **directly from the browser**
-  using each user's own key — there is no backend.
-- **No server, no auth, no database** — all state lives in `localStorage` (`carelab_canvas_v1`)
-  and in the downloadable **Jump Script** JSON file teams pass between sessions/members.
+- **Next.js 14** (App Router, TypeScript, Tailwind CSS), built as a static export (`output: "export"`)
+- **AI:** Anthropic **Claude (`claude-sonnet-4-6`)** via the official `@anthropic-ai/sdk`, called
+  from a **Cloudflare Pages Function** (`functions/api/generate.ts`) so the key stays server-side.
+- **No auth, no database** — all state lives in `localStorage` (`carelab_canvas_v1`) and in the
+  downloadable **Jump Script** JSON file teams pass between sessions/members.
 
 ## Getting started
 
 ```bash
 npm install
-npm run dev
+npm run dev      # UI only — fast iteration; /api/generate is NOT served here
 ```
 
-Open http://localhost:3000, click **🔑 API key**, and paste a free Gemini key
-(https://aistudio.google.com/apikey). The key is stored only in your browser.
+`next dev` doesn't run the Pages Function, so to exercise the AI locally use the preview command
+(Cloudflare's runtime), with the key in `.dev.vars`:
+
+```bash
+cp .dev.vars.example .dev.vars   # then set ANTHROPIC_API_KEY=sk-ant-...
+npm run preview                  # builds, then runs the function + site in workerd
+```
 
 ## Deploy to Cloudflare Pages
-
-It's a static site, so deployment is just "build and upload a folder."
 
 **Via Git (recommended):** connect the repo in the Cloudflare dashboard
 (**Workers & Pages → Create → Pages → Connect to Git**) with:
@@ -40,27 +43,26 @@ It's a static site, so deployment is just "build and upload a folder."
 | Build command    | `npm run build`                |
 | Build output dir | `out`                          |
 
-There is **no environment variable / secret to set** — each user enters their own Gemini
-key in the app. (That key is browser-only and is *not* saved into a Jump Script.)
+Then set the key: **Pages project → Settings → Variables and Secrets → add `ANTHROPIC_API_KEY`**
+(type *Secret*), for Production (and Preview if you use preview deployments). The
+`functions/` directory is picked up automatically, and `wrangler.toml` supplies the required
+`nodejs_compat` flag.
 
-**Via CLI (one-off):**
-
-```bash
-npm run build
-npx wrangler pages deploy out
-```
+> Don't paste the key anywhere in the repo — it lives only in the Pages environment (and your
+> local, git-ignored `.dev.vars`).
 
 ## How the app is structured
 
 ```
+functions/
+  api/generate.ts         Cloudflare Pages Function — server-side Claude proxy (holds the key)
 app/
   layout.tsx              Root layout — wraps everything in <CanvasProvider>
   page.tsx                Landing / overview
   canvas/page.tsx         The 12-block workspace (CanvasWorkspace)
   report/page.tsx         The report builder (ReportBuilder)
 components/
-  ApiKeyButton.tsx        Header button + modal for the user's own Gemini key
-  CanvasProvider.tsx      localStorage-backed state + autosave (+ API key)
+  CanvasProvider.tsx      localStorage-backed state + autosave
   CanvasWorkspace.tsx     App shell: header, progress, sidebar, footer nav
   BlockView.tsx           Block header (verbatim learning text) + body dispatcher
   blocks/InputBlockView   Human-input fields (Blocks 1–3)
@@ -72,7 +74,7 @@ lib/
   prism.ts                PRISM lenses + questions
   storage.ts              localStorage + Jump Script import/export
   context.ts              Builds the AI grounding context from prior blocks
-  ai.ts                   Calls the Gemini API directly from the browser
+  ai.ts                   Client helper that POSTs to /api/generate
   types.ts                Shared types
 ```
 
@@ -84,9 +86,8 @@ in it is editable, so teams can collaborate and pick up where they left off.
 
 > Rule to remember: *if it's not in your Jump Script, it doesn't exist.*
 
-## Switching to the Claude API later
+## Changing the AI model
 
-The only AI integration point is **`lib/ai.ts`** (search for `CLAUDE API MIGRATION`). Note that
-Anthropic does not allow direct browser calls, so a Claude migration would require adding a small
-server proxy to hold the key (e.g. a Cloudflare Pages Function) — at which point the app would no
-longer be a pure static site.
+The only place the app talks to the model is **`functions/api/generate.ts`** — change the `MODEL`
+constant (e.g. `claude-haiku-4-5` for lower cost, `claude-opus-4-8` for max quality). The client
+(`lib/ai.ts`) and everything else stay the same.

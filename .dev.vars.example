@@ -1,0 +1,5 @@
+# Copy to ".dev.vars" for local Cloudflare Pages preview (`npm run preview`).
+# Wrangler loads this automatically so the /api/generate function can reach Claude.
+# Do NOT commit the real .dev.vars. In production, set ANTHROPIC_API_KEY in the
+# Cloudflare Pages project settings instead.
+ANTHROPIC_API_KEY=sk-ant-your-key-here

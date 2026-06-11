@@ -6,7 +6,6 @@ import { BLOCKS, BLOCK_BY_ID } from "@/lib/blocks";
 import { useCanvas } from "./CanvasProvider";
 import { AutoTextarea } from "./AutoTextarea";
 import { Markdown } from "./Markdown";
-import { ApiKeyButton } from "./ApiKeyButton";
 import { generate } from "@/lib/ai";
 import { buildSystemContext, getBlockReportText } from "@/lib/context";
 import type { CanvasState } from "@/lib/types";
@@ -46,7 +45,7 @@ const fieldInput =
   "w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:border-black/20";
 
 export function ReportBuilder() {
-  const { state, apiKey, setTeam, setSolution, setReport, setFinalWriteup } = useCanvas();
+  const { state, setTeam, setSolution, setReport, setFinalWriteup } = useCanvas();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showWriteups, setShowWriteups] = useState(false);
@@ -76,7 +75,6 @@ export function ReportBuilder() {
       const user = `Here are our team's curated canvas write-ups, block by block:\n\n${writeups}\n\n${meta}\n\n${deliver}${guide}\n\nFormat your ENTIRE response using these exact section markers, each on its own line:\n=== EXECUTIVE SUMMARY ===\n(the one-page executive summary)\n=== PITCH DECK OUTLINE ===\n(the 10-slide outline)`;
 
       const reply = await generate({
-        apiKey,
         system,
         messages: [{ role: "user", content: user }],
       });
@@ -108,16 +106,13 @@ export function ReportBuilder() {
           ← Back to canvas
         </Link>
         <span className="text-sm font-bold text-[#2b2b29]">🚀 Impact Deliverables</span>
-        <div className="flex items-center gap-2">
-          <ApiKeyButton />
-          <button
-            onClick={() => window.print()}
-            disabled={!hasReport}
-            className="rounded-lg bg-impact px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 disabled:opacity-40"
-          >
-            Download PDF
-          </button>
-        </div>
+        <button
+          onClick={() => window.print()}
+          disabled={!hasReport}
+          className="rounded-lg bg-impact px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 disabled:opacity-40"
+        >
+          Download PDF
+        </button>
       </header>
 
       <div className="mx-auto max-w-3xl space-y-6 px-5 py-7">
